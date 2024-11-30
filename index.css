@@ -1,0 +1,25 @@
+.timer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    border: 2px solid white;
+    font-size: 2rem;
+    border-radius: 3rem;
+    margin: 1rem;
+    padding: 1rem;
+    background-color: #f0def3;
+}
+
+.material-icons {
+    font-size: 2rem;
+}
+.timer__btn{
+    background-color: rgb(255, 255, 255);
+    border-radius: 3rem;
+    height: 3rem;
+    width: 3rem;
+    display: flex;           
+    justify-content: center; 
+    align-items: center;
+}

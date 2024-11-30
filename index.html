@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="output.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>ProActive</title>
+</head>
+<body style="width: 20rem; height: 25rem;">
+    <h1 class="text-3xl font-bold underline">ProActive</h1>
+    <div class="flex items-center justify-between w-full px-4 mt-4">
+        <label for="bossModeToggle" class="text-xl font-semibold mr-4">Boss Mode</label>
+        <div class="relative inline-block w-12 h-6 align-middle">
+            <input type="checkbox" id="bossModeToggle" class="sr-only peer">
+            <div class="w-full h-full bg-gray-300 rounded-full peer-checked:bg-blue-500 transition"></div>
+            <div class="absolute w-4 h-4 bg-white rounded-full shadow-md transition-all peer-checked:translate-x-6 top-1 left-1"></div>
+        </div>
+    </div>    
+
+    <div class="timer-container">
+        <script src="../backend/index.js" type="module"></script>
+    </div>
+    
+</body>
+</html>
