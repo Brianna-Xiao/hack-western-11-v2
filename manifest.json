@@ -1,10 +1,13 @@
 {
     "name": "ProActive",
-    "version": "1.0.7",
+    "version": "1.0.10",
     "description": "The greatest productivity extension ever!",
     "manifest_version": 3,
     "authors": "Kevin, Jasmine, Brianna, Satwika",
-    "permissions": ["videoCapture","storage","https://api.openai.com/"],
+    "permissions": [
+        "storage",
+        "activeTab"
+      ],    
     "host_permissions": ["https://api.openai.com/*"],
     "action":{
         "default_popup": "client/index.html",
