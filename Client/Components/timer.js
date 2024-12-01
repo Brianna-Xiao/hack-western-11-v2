@@ -37,6 +37,11 @@ export default class Timer {
             }
 
         });
+
+        window.addEventListener('unload', () => {
+            console.log('Popup closed');
+        });
+        
     }
 
     async loadInitialState(){
@@ -99,6 +104,7 @@ export default class Timer {
                 this.remainingSeconds = 0;
                 this.updateInterfaceTime();
                 this.stop();
+                alert("TIMES UP LIL BOY");
             }
             //problem is that when the timer is set to a knew time, and the extension is closed right away
             //the timer state is not saved since the state is only saved during this "start()" function 
