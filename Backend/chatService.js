@@ -1,10 +1,12 @@
 import express from "express";
 import axios from 'axios';
 import dotenv from 'dotenv';
-
+import cors from 'cors';
 dotenv.config(); // To load the .env file
 
+
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -41,7 +43,13 @@ app.post('/chat', async (req, res) => {
     }
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+}).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.log(`Port ${PORT} is busy. Please try a different port.`);
+    } else {
+        console.error(err);
+    }
 });
