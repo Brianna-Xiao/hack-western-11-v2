@@ -23,3 +23,31 @@
     justify-content: center; 
     align-items: center;
 }
+
+#responseArea {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+.user-message {
+    color: blue;
+    margin: 5px 0;
+}
+
+.assistant-message {
+    color: green;
+    margin: 5px 0;
+}
+
+.loading {
+    font-style: italic;
+}
+
+.error-message {
+    color: red;
+}
+

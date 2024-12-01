@@ -7,11 +7,20 @@ new timer(
 const bossModeToggle = document.getElementById("bossModeToggle");
 
 chrome.storage.sync.get("bossMode", (data) => {
-    bossModeToggle.checked = data.bossMode || false;
-    updateSwitchUI(bossModeToggle.checked);
+    if (data.bossMode === undefined || data.bossMode === true) {
+        // Default to "Off" when first loaded or previously "On"
+        chrome.storage.sync.set({ bossMode: false }, () => {
+            bossModeToggle.checked = false;
+            updateSwitchUI(false);
+        });
+    } else {
+        bossModeToggle.checked = data.bossMode;
+        updateSwitchUI(data.bossMode);
+    }
 });
 
-bossModeToggle.addEventListener("change", async () => {
+bossModeToggle.addEventListener("change", async (e) => {
+    e.stopPropagation();
     const isBossModeOn = bossModeToggle.checked;
     chrome.storage.sync.set({ bossMode: isBossModeOn });
     updateSwitchUI(isBossModeOn);
