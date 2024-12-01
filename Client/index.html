@@ -11,6 +11,8 @@
 </head>
 <body style="width: 20rem; height: 25rem;">
     <h1 class="text-3xl font-bold underline">ProActive</h1>
+    
+    <!-- Boss Mode Toggle -->
     <div class="flex items-center justify-between w-full px-4 mt-4">
         <label for="bossModeToggle" class="text-xl font-semibold mr-4">Boss Mode</label>
         <div class="relative inline-block w-12 h-6 align-middle">
@@ -21,6 +23,10 @@
     </div>    
 
     <div class="timer-container"></div>
+    <!-- Timer Container -->
+    <div class="timer-container">
+        <script src="./index.js" type="module"></script>
+    </div>
     
     <!-- Add Chat Interface -->
     <div class="flex flex-col px-4 mt-4">
@@ -37,11 +43,6 @@
             >
                 <span class="material-icons">send</span>
             </button>
-        </div>
-        <div 
-            id="responseArea"
-            class="mt-3 p-3 min-h-[100px] max-h-[150px] overflow-y-auto border rounded-lg bg-gray-50"
-        >
         </div>
     </div>
 

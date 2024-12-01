@@ -1,4 +1,4 @@
-import timer from './components/timer.js';
+import timer from '../client/components/timer.js';
 
 // Initialize Socket.IO connection with explicit transports
 const socket = io('http://localhost:3000', {
@@ -138,7 +138,6 @@ bossModeToggle.addEventListener("change", async (e) => {
         updateSwitchUI(false);
     }
 });
-
 function updateSwitchUI(isOn) {
     console.log(`Boss Mode is now ${isOn ? "ON" : "OFF"}`);
     const label = document.querySelector("label[for='bossModeToggle']");
