@@ -1,56 +1,47 @@
-require('dotenv').config();
+import express from "express";
+import axios from 'axios';
+import dotenv from 'dotenv';
 
-class ChatService {
-    constructor() {
-        this.chatHistory = [];
-    }
+dotenv.config(); // To load the .env file
 
-    async getAIResponse(message) {
-        try {
-            const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-            
-            if (!OPENAI_API_KEY) {
-                throw new Error('Please set your OpenAI API key in .env file!');
-            }
+const app = express();
+app.use(express.json());
 
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+app.post('/chat', async (req, res) => {
+    try {
+        const prompt = req.body.prompt;
+
+        // Check if the prompt is provided
+        if (!prompt) {
+            return res.status(400).json({ error: 'Prompt is required' });
+        }
+
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'user', content: prompt }],
+                max_tokens: 150,
+            },
+            {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`,
                 },
-                body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
-                    messages: [
-                        { role: 'user', content: message }
-                    ],
-                    temperature: 0.7
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'API request failed');
             }
+        );
 
-            const data = await response.json();
-            
-            // Store in chat history
-            this.chatHistory.push(
-                { role: 'user', content: message },
-                { role: 'assistant', content: data.choices[0].message.content }
-            );
-
-            return data.choices[0].message.content;
-        } catch (error) {
-            console.error('Detailed error:', error);
-            throw error;
-        }
+        const reply = response.data.choices[0].message.content.trim();
+        res.json({ reply });
+    } catch (error) {
+        console.error('Error communicating with OpenAI:', error);
+        res.status(500).json({ error: 'An error occurred while processing your request' });
     }
+});
 
-    getChatHistory() {
-        return this.chatHistory;
-    }
-}
-
-module.exports = ChatService;
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
