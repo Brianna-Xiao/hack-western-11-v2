@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Access</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay playsinline></video>
+    <script>
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    },
+                    audio: false
+                });
+                
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                
+                // Notify the extension that camera is working
+                chrome.runtime.sendMessage({
+                    type: 'cameraStream',
+                    success: true
+                });
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                chrome.runtime.sendMessage({
+                    type: 'cameraStream',
+                    error: error.message
+                });
+            }
+        }
+
+        // Start camera when page loads
+        initCamera();
+
+        // Clean up when window closes
+        window.onbeforeunload = () => {
+            const video = document.getElementById('video');
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        };
+    </script>
+</body>
+</html> 
