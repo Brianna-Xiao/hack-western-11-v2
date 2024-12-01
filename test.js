@@ -1,5 +1,8 @@
-// Remove the require statement as it won't work in browser
-// require('dotenv').config();
+require('dotenv').config();
+
+const conversationHistory = [
+    { role: "system", content: "You are a helpful and friendly assistant." }
+]; // Initialize conversation history with system instructions
 
 async function getChatGPTResponse(prompt) {
     // Get API key from chrome storage instead of process.env
@@ -12,6 +15,9 @@ async function getChatGPTResponse(prompt) {
 
     const API_URL = 'https://api.openai.com/v1/chat/completions';
 
+    // Add the user's message to the conversation history
+    conversationHistory.push({ role: "user", content: prompt });
+
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -20,14 +26,9 @@ async function getChatGPTResponse(prompt) {
                 'Authorization': `Bearer ${OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-                temperature: 0.7
+                model: 'gpt-3.5-turbo', // Use GPT-3.5-turbo for conversational responses
+                messages: conversationHistory,
+                temperature: 0.7 // Adjust for more/less randomness in responses
             })
         });
 
@@ -36,7 +37,12 @@ async function getChatGPTResponse(prompt) {
         }
 
         const data = await response.json();
-        return data.choices[0].message.content;
+
+        // Get ChatGPT's reply and add it to the conversation history
+        const reply = data.choices[0].message.content;
+        conversationHistory.push({ role: "assistant", content: reply });
+
+        return reply;
     } catch (error) {
         console.error('Error:', error);
         throw error;
@@ -44,73 +50,65 @@ async function getChatGPTResponse(prompt) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const chatInput = document.getElementById('user-input');
-    const responseArea = document.getElementById('chat-messages');
-    const chatHistory = [];
+    const chatInput = document.getElementById('chatInput'); // Text input field
+    const sendButton = document.getElementById('sendButton'); // Send button
+    const responseArea = document.getElementById('responseArea'); // Chat display area
 
-    function addMessageToChat(role, content) {
-        const messageDiv = document.createElement('div');
-        
-        // Add specific positioning classes based on role
-        if (role === 'user') {
-            messageDiv.className = 'flex justify-end mb-2';
-            messageDiv.innerHTML = `
-                <div class="bg-blue-500 text-white rounded-lg py-2 px-4 max-w-[70%]">
-                    ${content}
-                </div>
-            `;
-        } else if (role === 'error') {
-            messageDiv.className = 'flex justify-center mb-2';
-            messageDiv.innerHTML = `
-                <div class="bg-red-500 text-white rounded-lg py-2 px-4 max-w-[70%]">
-                    ${content}
-                </div>
-            `;
-        } else {
-            messageDiv.className = 'flex justify-start mb-2';
-            messageDiv.innerHTML = `
-                <div class="bg-gray-200 rounded-lg py-2 px-4 max-w-[70%]">
-                    ${content}
-                </div>
-            `;
-        }
-        
-        responseArea.appendChild(messageDiv);
-        responseArea.scrollTop = responseArea.scrollHeight;
-        chatHistory.push({ role, content });
-    }
+    async function handleChatSubmission() {
+        const message = chatInput.value.trim(); // Get and sanitize user input
+        if (!message) return; // Ignore empty input
 
-    async function handleChatSubmission(e) {
-        e.preventDefault();
-        const message = chatInput.value.trim();
-        if (!message) return;
-
-        // Add user message
-        addMessageToChat('user', message);
-        chatInput.value = '';
+        // Display user's message in the chat area
+        const userMessageElement = document.createElement('div');
+        userMessageElement.className = 'user-message';
+        userMessageElement.textContent = `You: ${message}`;
+        responseArea.appendChild(userMessageElement);
 
         try {
-            // Show loading message
-            const loadingId = setTimeout(() => {
-                addMessageToChat('ai', 'Thinking...');
-            }, 300);
+            // Show "typing..." indicator
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'assistant-message loading';
+            loadingMessage.textContent = 'ChatGPT is typing...';
+            responseArea.appendChild(loadingMessage);
 
+            // Fetch the response from ChatGPT
             const response = await getChatGPTResponse(message);
-            
-            // Clear loading message if it was added
-            clearTimeout(loadingId);
-            // Remove last message if it was "Thinking..."
-            if (responseArea.lastChild && responseArea.lastChild.textContent.includes('Thinking...')) {
-                responseArea.removeChild(responseArea.lastChild);
-            }
-            
-            addMessageToChat('ai', response);
+
+            // Remove "typing..." indicator
+            loadingMessage.remove();
+
+            // Display ChatGPT's response
+            const assistantMessageElement = document.createElement('div');
+            assistantMessageElement.className = 'assistant-message';
+            assistantMessageElement.textContent = `ChatGPT: ${response}`;
+            responseArea.appendChild(assistantMessageElement);
+
+            // Scroll to the bottom of the chat
+            responseArea.scrollTop = responseArea.scrollHeight;
+
+            // Clear the input field
+            chatInput.value = '';
         } catch (error) {
+            // Display an error message if ChatGPT cannot respond
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'error-message';
+            errorMessage.textContent = 'Error: Could not get a response. Please try again.';
+            responseArea.appendChild(errorMessage);
             console.error('Chat error:', error);
-            addMessageToChat('error', 'Error: Could not get a response. Please try again.');
         }
     }
 
-    // Handle form submission
-    document.getElementById('chat-form').addEventListener('submit', handleChatSubmission);
+    // Handle "Send" button click
+    sendButton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Ensure this doesn't interfere with other listeners
+        handleChatSubmission();
+    });
+
+    // Handle "Enter" key press in the input field
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.stopPropagation(); // Ensure this doesn't interfere with other listeners
+            handleChatSubmission();
+        }
+    });
 });

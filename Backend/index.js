@@ -19,7 +19,8 @@ chrome.storage.sync.get("bossMode", (data) => {
     }
 });
 
-bossModeToggle.addEventListener("change", async () => {
+bossModeToggle.addEventListener("change", async (e) => {
+    e.stopPropagation();
     const isBossModeOn = bossModeToggle.checked;
     chrome.storage.sync.set({ bossMode: isBossModeOn });
     updateSwitchUI(isBossModeOn);
