@@ -4,10 +4,13 @@
     "description": "The greatest productivity extension ever!",
     "manifest_version": 3,
     "authors": "Kevin, Jasmine, Brianna, Satwika",
-    "permissions": ["videoCapture","storage"],
-    "host_permissions": ["<all_urls>"],
+    "permissions": ["videoCapture","storage","https://api.openai.com/"],
+    "host_permissions": ["https://api.openai.com/*"],
     "action":{
         "default_popup": "client/index.html",
         "default_title": "ProActive"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://api.openai.com/"
     }
 }
