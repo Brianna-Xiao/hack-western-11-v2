@@ -44,7 +44,6 @@ bossModeToggle.addEventListener("change", async (e) => {
         console.log("Boss Mode is OFF. Camera access not required.");
     }
 });
-
 function updateSwitchUI(isOn) {
     console.log(`Boss Mode is now ${isOn ? "ON" : "OFF"}`);
     const label = document.querySelector("label[for='bossModeToggle']");
