@@ -25,8 +25,13 @@ sendButton.addEventListener("click", async () => {
 // Function to display messages in the chatbox
 function displayMessage(message, sender) {
     const messageElement = document.createElement("div");
-    messageElement.className = sender === "user" ? "text-blue-600 mb-2" : "text-green-600 mb-2";
-    messageElement.textContent = `${sender === "user" ? "You" : "Bot"}: ${message}`;
+    messageElement.className = `flex ${sender === "user" ? "justify-end" : "justify-start"}`;
+    
+    const bubble = document.createElement("div");
+    bubble.className = `${sender === "user" ? "bg-purple-500" : "bg-pink-500"} text-white rounded-lg px-4 py-2 max-w-[80%] mb-2`;
+    bubble.textContent = message;
+    
+    messageElement.appendChild(bubble);
     chatbox.appendChild(messageElement);
     chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll to the latest message
 }

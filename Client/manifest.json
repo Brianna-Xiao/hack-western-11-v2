@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "ProActive",
+  "version": "1.0",
+  "description": "ProActive Boss Mode Extension",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:*/*",
+    "ws://localhost:*/*",
+    "https://*.google.com/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ws://localhost:* http://localhost:* ws://127.0.0.1:* http://127.0.0.1:*; object-src 'self'; media-src * mediastream: blob:",
+    "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self'"
+  },
+  "web_accessible_resources": [{
+    "resources": ["socket.io.js", "*.html"],
+    "matches": ["<all_urls>"]
+  }],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "ProActive"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+} 

@@ -6,6 +6,7 @@
     <link href="output.css" rel="stylesheet">
     <link href="index.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="socket.io.js"></script>
     <title>ProActive</title>
 </head>
 <body style="width: 20rem; height: 25rem;">
@@ -21,12 +22,18 @@
         </div>
     </div>    
 
+    <div class="timer-container"></div>
     <!-- Timer Container -->
     <div class="timer-container">
         <script src="./index.js" type="module"></script>
     </div>
     
-    <!-- Add Chat Interface -->
+    <!-- Chat Messages Container -->
+    <div id="chatMessages" class="flex flex-col space-y-2 px-4 mt-4 h-48 overflow-y-auto">
+        <!-- Messages will be added here dynamically -->
+    </div>
+
+    <!-- Chat Input Interface -->
     <div class="flex flex-col px-4 mt-4">
         <div class="flex space-x-2">
             <input 
@@ -44,7 +51,7 @@
         </div>
     </div>
 
-    <!-- Add ChatGPT Service Script -->
-    <script src="../Backend/chatService.js"></script>
+    <script src="chatService.js" type="module"></script>
+    <script src="index.js" type="module"></script>
 </body>
 </html>
