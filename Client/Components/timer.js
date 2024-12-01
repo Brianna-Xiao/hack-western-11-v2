@@ -1,5 +1,4 @@
 
-
 export default class Timer {
     constructor(root){
         root.innerHTML = Timer.getHTML();
@@ -13,8 +12,7 @@ export default class Timer {
 
         this.interval = null;
         this.remainingSeconds = 0;
-
-        this.updateInterfaceTime();
+        this.loadInitialState();
 
         this.el.control.addEventListener("click", () =>{
             if(this.interval === null){
@@ -41,6 +39,34 @@ export default class Timer {
         });
     }
 
+    async loadInitialState(){
+        try{
+            const response = await fetch("http://localhost:5000/timer");
+            const data = await response.json();
+            this.remainingSeconds = data.remainingSeconds;
+            this.updateInterfaceTime();
+        }
+        catch(error){
+            console.error("Error fetching timer state:", error);
+        }
+    }
+
+    async updateBackendState(seconds){
+        try{
+            const response = await fetch("http://localhost:5000/timer", {
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify({seconds}),
+            });
+        
+            const data = await response.json();
+            console.log("Backend state updated:", data)
+        }
+        catch(error){
+            console.error("Failed to update timer state:", error);
+        }
+    }
+
     updateInterfaceTime(){
         const minutes = Math.floor(this.remainingSeconds / 60)
         const seconds = this.remainingSeconds % 60
@@ -62,10 +88,10 @@ export default class Timer {
         }
     }
 
-    start() {
+    async start() {
         if (this.remainingSeconds === 0) return;
 
-        this.interval = setInterval(() =>{
+        this.interval = setInterval(async () =>{
             this.remainingSeconds--;
             this.updateInterfaceTime();
             
@@ -74,17 +100,23 @@ export default class Timer {
                 this.updateInterfaceTime();
                 this.stop();
             }
+            //problem is that when the timer is set to a knew time, and the extension is closed right away
+            //the timer state is not saved since the state is only saved during this "start()" function 
+            //and the start function is not called after the timer is set until the play button is pressed
+            await this.updateBackendState(this.remainingSeconds);
         }, 1000);
 
         this.updateInterfaceControls();
     }
 
-    stop(){
+    async stop(){
         clearInterval(this.interval);
 
         this.interval = null;
 
         this.updateInterfaceControls();
+
+        await this.updateBackendState(this.remainingSeconds);
     }
 
     static getHTML(){
