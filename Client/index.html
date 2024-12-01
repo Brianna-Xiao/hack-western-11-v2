@@ -22,6 +22,23 @@
     <div class="timer-container">
         <script src="../backend/index.js" type="module"></script>
     </div>
-    
+
+    <div class="flex justify-center mt-2">
+        <button id="playPacman" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm">
+            Play Pac-Man
+        </button>
+    </div>
+
+    <div id="pacmanGame" style="display: none;">
+        <div id="game-container">
+            <div id="world"></div>
+            <div id="pacman"></div>
+            <div id="score">0</div>
+            <div id="highscore">0</div>
+        </div>
+    </div>
+
+    <script src="./Components/pacman/Pacman-Chrome-Extension/Pac-Man-JS/pacman.js"></script>
+    <script src="./Components/pacmanHandler.js"></script>
 </body>
 </html>
